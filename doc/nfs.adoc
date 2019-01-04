@@ -1,0 +1,52 @@
+= NFS(Network File System) configuration
+leyafo <liyafo@intellicredit.cn>
+v1.1, 2016-06
+:toc:
+
+== Server
+
+Install the components
+```bash
+sudo apt-get install nfs-kernel-server
+```
+Create the Share Directory on the Host Server
+```bash
+sudo mkdir /var/nfs
+```
+Configure the NFS Exports
+```bash
+# /etc/exports
+/mnt/web_sharing pascal(rw,no_subtree_check,all_squash,anonuid=1001,anongid=1001)
+/mnt/web_sharing euler(rw,no_subtree_check,all_squash,anonuid=1001,anongid=1001)
+/mnt/web_sharing savior(rw,no_subtree_check,all_squash,anonuid=1001,anongid=1001)
+```
+
+=== Caution
+NFS 的用户管理有点麻烦，它没有像 samba 那样在连接时提供用户名和密码。它使用的是 unix 中的 user permission 来确定用户是否可以读写。麻烦之处在于 client 和 server 中的 user 与 group 的 id 必须一致。
+
+服务端几个重要的参数：
+root_squash  将客户端进来的 root 请求转换为 匿名的 uid 与 gid.
+no_root_squash 与上面相反
+
+anonuid  anongid 将客户端进来的匿名 uid 与 gid，请求转为指定的 uid 与 gid，一般配合 all_sqush 使用。
+all_squash 转化客户端所有用户的请求为匿名的 uid 与 gid.
+
+
+== Client
+Install the components
+```bash
+sudo apt-get install nfs-common
+```
+
+=== Mount
+```bash
+sudo mount -t nfs NFS_server_host:/mnt/web_sharing /mnt/web_sharing
+```
+
+=== Make Remote NFS Directory Mounting Automatic
+```bash
+# /etc/fstab
+NFS_server_host:/mnt/web_sharing /mnt/web_sharing nfs rsize=8192,wsize=8192,timeo=14,intr
+```
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-14-04[Read More Tutorial]

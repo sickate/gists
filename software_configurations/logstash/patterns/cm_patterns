@@ -1,0 +1,30 @@
+JSON_BODY \{[^\.]*\}
+ARRAY .*
+JSON_BODY_NEW  \{[^\<\>]*\}
+URL_ACTION [\:_0-9A-Za-z\/]*
+CM_WORDS (%{WORD}[ ]?)+
+EMAILADDRESSPART [a-zA-Z0-9_.+-=:]+
+EMAILADDRESS %{EMAILADDRESSPART:email_name}@%{EMAILADDRESSPART:email_domain}
+CM_TIMESTAMP_ISO8601 %{YEAR}-%{MONTHNUM}-%{MONTHDAY}[ T]%{HOUR}:?%{MINUTE}(?::?%{SECOND}) ?%{ISO8601_TIMEZONE}?
+
+
+CM_LOG_HEADER \[%{UUID:session_id}\] \[%{CM_TIMESTAMP_ISO8601:timestamp}\] \[%{IP:clientip}\] \[%{LOGLEVEL:log_level}\]
+
+CM_HASH_LOG %{CM_LOG_HEADER} \[type\:%{CM_WORDS:log_action_type}\] \[origin\:%{NOTSPACE:origin}\] \[algo\:%{NOTSPACE:algorithm}\] \[digest\:%{BASE16NUM:digest}\]
+
+CM_REQUEST %{CM_LOG_HEADER} \[entrance:%{WORD:entrance}\] \[%{WORD:api_name}\:\:%{WORD:module_name}\:%{URL_ACTION:log_action_type}\] \[method\:%{WORD:http_method}\] \[User\:%{EMAILADDRESS:email}\]
+
+STORE_RE %{CM_LOG_HEADER} \[NoSqlStore\] \[method:%{WORD:method}\] \[request_body\:%{JSON_BODY:json_body}\] \[data_type\:%{WORD:data_type}\]
+RULE_RESULT %{CM_LOG_HEADER} \[NoSqlStore\] \[method:%{WORD:method}\] \[data_type\:%{WORD:data_type}\] \[object_id\:%{NUMBER:object_id}\] NoSql store custom request got response %{JSON_BODY:json_body}
+SEARCH_BLK %{CM_LOG_HEADER} \[action\:%{URL_ACTION:rule_engine_action}\] \[(response_body|params)\:%{JSON_BODY:json_body}\]
+
+
+CM_LOG_HEADER_NEW \[%{CM_TIMESTAMP_ISO8601:timestamp}\] \[%{LOGLEVEL:log_level}\] \[%{UUID:session_id}\] \[%{IP:clientip}\]
+CM_HASH_LOG_NEW %{CM_LOG_HEADER_NEW} \[type\:%{CM_WORDS:log_action_type}\] \[origin\:%{NOTSPACE:origin}\] \[algo\:%{NOTSPACE:algorithm}\] \[digest\:%{BASE16NUM:digest}\]
+CM_REQUEST_NEW %{CM_LOG_HEADER_NEW} \[entrance:%{WORD:entrance}\] \[%{WORD:api_name}\:\:%{WORD:module_name}\:%{URL_ACTION:log_action_type}\] \[method\:%{WORD:http_method}\] \[User\:%{EMAILADDRESS:email}\] \[SearchParams\:%{JSON_BODY_NEW:body}\]
+STORE_RE_NEW %{CM_LOG_HEADER_NEW} \[NoSqlStore\] \[method:%{WORD:method}\] \[request_body\:%{JSON_BODY:json_body}\] \[data_type\:%{WORD:data_type}\]
+SEARCH_BLK_NEW %{CM_LOG_HEADER_NEW} \[action\:%{URL_ACTION:rule_engine_action}\] \[(response_body|params)\:%{JSON_BODY_NEW:json_body}\]
+APP_RULE %{CM_LOG_HEADER_NEW} \[app_id\:%{WORD:app_id}\] \[tenant_name\:%{DATA:tenant_name}\] \[risk_level\:%{WORD:risk_level}\] \[hitted_rule_type\:\[%{ARRAY:hitted_rule_type}\]\] \[hitted_rules\:\[%{ARRAY:hitted_rules}\]\] 
+
+HTTP_LOG \[%{UUID:http_session_id}\] \[%{CM_TIMESTAMP_ISO8601:timestamp}\] \[%{IP:clientip}\] 
+
