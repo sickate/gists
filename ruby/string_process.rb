@@ -8,3 +8,4 @@ bin = arr.map {|s|'%08b' % s}.join("")
 bin.scan(/.{8}/).map{|s|s.to_i(2)}.pack("U*")
 
 
+

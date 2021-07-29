@@ -1,6 +1,6 @@
 # perpare tools
 
-sudo cp ../packages/cassandra.repo /etc/yum.repos.d/
+sudo cp ./yum_repos/cassandra.repo /etc/yum.repos.d/
 sudo yum install cassandra -y
 
 # reload daemon & start
@@ -18,4 +18,4 @@ sudo mkdir -p /data1/cassandra/commitlog
 sudo mkdir -p /data1/cassandra/saved_caches
 
 sudo chown -R cassandra:cassandra /data1/cassandra
-sudo cp ../config_templates/cassandra.yaml /etc/cassandra/conf/
+sudo cp ./configuration_templates/cassandra.yaml /etc/cassandra/conf/

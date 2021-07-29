@@ -1,0 +1,22 @@
+[Unit]
+Description=Kylin webserver daemon
+After=network.target
+
+# Wants=postgresql.service mysql.service redis.service rabbitmq-server.service
+[Service]
+# PIDFile=/usr/share/kylin/pid
+# WorkingDirectory 很重要，有些配置是依赖当前目录的，没有的话就会出问题
+WorkingDirectory=/usr/share/kylin 
+EnvironmentFile=/etc/systemd/system/kylin.env
+User=root
+Group=root
+Type=forking
+ExecStart=/bin/bash -c '/usr/share/kylin/bin/kylin.sh start'
+ExecReload=/bin/bash -c '/usr/share/kylin/bin/kylin.sh stop && /usr/share/kylin/bin/kylin.sh start'
+ExecStop=/bin/bash -c '/usr/share/kylin/bin/kylin.sh stop'
+Restart=on-failure
+RestartSec=42s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -18,3 +18,9 @@ pscp -r -h ~/.hosts/new.txt ./bootstrap /tmp/
 
 # pssh with password input
 pssh -A -i -h ~/.hosts/solar.txt
+
+
+# scp
+# scp is trying to grab as much bandwidth as possible, and any delay (by a firewall, etc.) can stall it. Limiting the bandwidth (with -l option) will fix it.
+# For example, you might want to limit the bandwidth to 1 MB/s (= 8192 Kbits/s):
+scp -l 8192 file destination

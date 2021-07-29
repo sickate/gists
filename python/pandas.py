@@ -75,6 +75,9 @@ top5 = df.groupby(['groupingcol1', 'groupingcol2']).head(5)
 # Grab DataFrame rows where specific column is null/notnull
 newdf = df[df['column'].isnull()]
 
+# multi-condition where
+df1 = df[(df.a != -1) & (df.b != -1)]
+
 # Select from DataFrame using multiple keys of a hierarchical index
 df.xs(('index level 1 value','index level 2 value'), level=('level 1','level 2'))
 
@@ -148,3 +151,7 @@ dupes = df[df.duplicated(['col1', 'col2', 'col3'], keep=False)]
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 # To display with commas and no decimals
 pd.options.display.float_format = '{:,.0f}'.format
+
+
+# suppress scientific notation
+dfm.uv.describe().apply(lambda x: format(x, 'f'))

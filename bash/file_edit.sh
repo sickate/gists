@@ -5,7 +5,9 @@ sudo grep -q -F 'LimitMEMLOCK=infinity' /usr/lib/systemd/system/elasticsearch.se
 
 # sudo echo issue fix
 # -a means append
-echo "bla bla" |sudo tee -a /etc/some_wheel_file
+echo "export JAVA_HOME=/etc/alternatives/java_sdk" |sudo tee -a ~/.bashrc
+
+export HBASE_HOME=/opt/hbase/current
 
 # remove executable for files
 find . -type f -exec chmod -x {} \;
@@ -44,9 +46,39 @@ rsync -avxHAX --progress / /new-disk/
 # check long gc in cassandra
 zgrep 'GC in [0-9][0-9][0-9][0-9]' /var/log/cassandra/system.log.*.zip | awk '{print $4}' | sort | uniq -c | awk '{print $2" "$1}' | tail
 
-
 # sed replace
 ls ./* | sed 's/-FIN//'| xargs rm
 
+
 # egrep output pattern
 egrep -oh '(\d{1,3}\.){3}\d{1,3}' log/large.log
+
+
+# AWK
+# condition: $10 > 309
+# action print $10
+awk -F' ' '$10>309 {print $10}' test.log
+# condition: $10 > 309
+# action: sum $10
+# END action: print $10
+awk -F' ' '{sum += $10} END {print sum}' test.log
+
+
+# SED
+# -i means (IN GNU) inplace editing
+sed -i -e 's/abc/XYZ/g' /tmp/file.txt
+# delete 5th line
+sed -i 5d test.log
+# replace
+sed s/cat/dog/g file.txt
+# print 2th line
+sed -n 2p file.txt
+# insert blank line in between every line
+sed G file.txt
+# delete matching line
+sed /cat/d
+# delete matching line, save original file as .bak
+sed -i.bak '/^HERE IT IS/d' <file>
+# insert line on line 7
+sed 'i7 myline' file.txt
+
